@@ -12,7 +12,7 @@
 
 \*\*\* Please don't write (push) your code to the main branch.
 
-5. Create `.env` file on the root folder to have `MONGODB_URI` and `PORT` etc.
+5. Create `.env` file on the root folder to have `MONGODB_URI`, `PORT` etc.
 
 6. Delete `.gitkeep` file in some of the directory.
 
