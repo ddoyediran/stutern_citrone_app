@@ -26,7 +26,7 @@ const login = async (req, res, next) => {
   if (!isPasswordCorrect) {
     throw new UnauthenticatedError("Credentials not valid!");
   }
-  // add token to the user's payload and as well sign the user in
+  // add token to the user's payload 
   const userPayload = createUserPayload(user);
   // send the user detail/ payload to the frontend folks.
   attachCookiesToResponse({ res, user: userPayload });
