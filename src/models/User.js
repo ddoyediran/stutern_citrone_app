@@ -11,6 +11,7 @@ const UserSchema = mongoose.Schema({
   email: {
     type: String,
     required: [true, "Please provide an email"],
+    unique: [true, "Email address already taken"]
   },
   password: {
     type: String,
@@ -21,7 +22,11 @@ const UserSchema = mongoose.Schema({
     enum: ["admin", "student"],
     default: "student",
   },
-});
+},
+  {
+    timestamps: true
+  }
+);
 
 UserSchema.pre("save", async function () {
   const salt = await bcrypt.genSalt(10);

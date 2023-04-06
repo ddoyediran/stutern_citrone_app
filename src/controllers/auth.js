@@ -3,6 +3,36 @@ const { StatusCodes } = require("http-status-codes");
 const { BadRequestError, UnauthenticatedError } = require("../errors");
 const { createUserPayload, attachCookiesToResponse } = require("../utils");
 
+//@desc Register a user
+//@route POST method - /api/v1/users/register
+const registerUser = async (req, res) => {
+  try {
+    //validation input fields
+    const { name, email, password } = req.body;
+    if (!name || !email || !password) {
+      res.status(StatusCodes.BAD_REQUEST);
+      throw new BadRequestError("All fields are mandatory");
+    };
+
+    //checking for an already existing user with the email
+    const emailAreadyExists = await User.findOne({ email });
+    if (emailAreadyExists) {
+      res.status(StatusCodes.BAD_REQUEST);
+      throw new BadRequestError("This user already exists");
+    };
+
+    const user = await User.create({
+      name,
+      email,
+      password
+    });
+    res.status(StatusCodes.CREATED).json({ _id: user.id, email: user.email });
+
+  } catch (error) {
+    res.status(StatusCodes.BAD_REQUEST).json({ message: error.message });
+  }
+}
+
 // To login user
 const login = async (req, res, next) => {
   // check if user type something in the password and email field
@@ -20,7 +50,8 @@ const login = async (req, res, next) => {
     throw new UnauthenticatedError("Credentials not valid!");
   }
 
-  // check compare the hash password with what we have in the database
+  // comparing the hashed-password from request-body with 
+  //the password stored in the database
   const isPasswordCorrect = await user.comparePassword(password);
   // email and password is not correct
   if (!isPasswordCorrect) {
@@ -44,8 +75,9 @@ const logout = async (req, res) => {
 };
 
 module.exports = {
+  registerUser,
   login,
-  logout,
+  logout
 };
 
 // login user
