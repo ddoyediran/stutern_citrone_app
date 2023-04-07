@@ -33,7 +33,8 @@ const registerUser = async (req, res) => {
   }
 }
 
-// To login user
+//@desc Login a user
+//@route POST method - /api/v1/users/login
 const login = async (req, res, next) => {
  try {
    // check if user type something in the password and email field
@@ -56,7 +57,7 @@ const login = async (req, res, next) => {
    const isPasswordCorrect = await user.comparePassword(password);
    // email and password is not correct
    if (!isPasswordCorrect) {
-     throw new UnauthenticatedError("Incorrect password!");
+     throw new UnauthenticatedError("username or password incorrect!");
    }
    // add token to the user's payload 
    const userPayload = createUserPayload(user);
