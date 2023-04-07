@@ -35,37 +35,42 @@ const registerUser = async (req, res) => {
 
 // To login user
 const login = async (req, res, next) => {
-  // check if user type something in the password and email field
-  const { email, password } = req.body;
+ try {
+   // check if user type something in the password and email field
+   const { email, password } = req.body;
 
-  // tell them to type their email and password
-  if (!email || !password) {
-    throw new BadRequestError("Please enter your email and password!");
-  }
-
-  // check (email) the database if the user exist
-  const user = await User.findOne({ email });
-
-  if (!user) {
-    throw new UnauthenticatedError("Credentials not valid!");
-  }
-
-  // comparing the hashed-password from request-body with 
-  //the password stored in the database
-  const isPasswordCorrect = await user.comparePassword(password);
-  // email and password is not correct
-  if (!isPasswordCorrect) {
-    throw new UnauthenticatedError("Credentials not valid!");
-  }
-  // add token to the user's payload 
-  const userPayload = createUserPayload(user);
-  // send the user detail/ payload to the frontend folks.
-  attachCookiesToResponse({ res, user: userPayload });
-
-  res.status(StatusCodes.OK).json({ user: userPayload });
+   // tell them to type their email and password
+   if (!email || !password) {
+     throw new BadRequestError("Please enter your email and password!");
+   }
+ 
+   // check (email) the database if the user exist
+   const user = await User.findOne({ email });
+ 
+   if (!user) {
+     throw new UnauthenticatedError("Credentials not valid!");
+   }
+ 
+   // comparing the hashed-password from request-body with 
+   //the password stored in the database
+   const isPasswordCorrect = await user.comparePassword(password);
+   // email and password is not correct
+   if (!isPasswordCorrect) {
+     throw new UnauthenticatedError("Incorrect password!");
+   }
+   // add token to the user's payload 
+   const userPayload = createUserPayload(user);
+   // send the user detail/ payload to the frontend folks.
+   attachCookiesToResponse({ res, user: userPayload });
+ 
+   res.status(StatusCodes.OK).json({ user: userPayload });
+ } catch (error) {
+  res.status(StatusCodes.BAD_REQUEST).json({ message: error.message })
+ }
 };
 
-// logout user
+//@ Desc logout a user
+//@route GET method - /api/v1/users/logout
 const logout = async (req, res) => {
   res.cookie("token", "logout", {
     httpOnly: true,
