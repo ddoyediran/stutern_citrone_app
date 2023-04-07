@@ -26,7 +26,9 @@ const start = async () => {
     // connect to Mongodb
     const connected = await connectDB(process.env.MONGODB_URI);
     if (connected) {
-      console.log("Connected to database!");
+      console.log("Connected to database:",
+      connected.connection.host,
+      connected.connection.name);
     }
 
     // start the server here
