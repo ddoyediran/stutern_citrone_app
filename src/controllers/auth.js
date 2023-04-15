@@ -8,8 +8,9 @@ const { createUserPayload, attachCookiesToResponse } = require("../utils");
 const registerUser = async (req, res) => {
   try {
     //validation input fields
-    const { name, email, password } = req.body;
-    if (!name || !email || !password) {
+    const { picture, avatar, firstName, lastName, email, password, confirmPassword, gender, 
+      phoneNumber, pronouns, track, bio, portfolio } = req.body;
+    if (!email || !password) {
       res.status(StatusCodes.BAD_REQUEST);
       throw new BadRequestError("All fields are mandatory");
     }
@@ -22,11 +23,25 @@ const registerUser = async (req, res) => {
     }
 
     const user = await User.create({
-      name,
+      picture,
+      avatar,
+      firstName,
+      lastName,
       email,
       password,
+      confirmPassword,
+      gender,
+      phoneNumber,
+      pronouns,
+      track,
+      bio,
+      portfolio
     });
-    res.status(StatusCodes.CREATED).json({ _id: user.id, email: user.email });
+    res.status(StatusCodes.CREATED).json({
+      _id: user.id,
+      email: user.email
+    });
+
   } catch (error) {
     res.status(StatusCodes.BAD_REQUEST).json({ message: error.message });
   }
@@ -48,25 +63,32 @@ const login = async (req, res, next) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      throw new UnauthenticatedError("Username or password incorrect!");
+      throw new UnauthenticatedError("username or password incorrect!");
     }
 
     // comparing the hashed-password from request-body with
     //the password stored in the database
     const isPasswordCorrect = await user.comparePassword(password);
+    
     // email and password is not correct
     if (!isPasswordCorrect) {
-      throw new UnauthenticatedError("Username or password incorrect!");
+      throw new UnauthenticatedError("username or password incorrect!");
     }
-    // add token to the user's payload
+    // add token to the user's payload 
     const userPayload = createUserPayload(user);
     // send the user detail/ payload to the frontend folks.
-    attachCookiesToResponse({ res, user: userPayload });
+    const token = attachCookiesToResponse({ res, user: userPayload });
 
-    res.status(StatusCodes.OK).json({ user: userPayload });
+    res.status(StatusCodes.OK).json({ token, user: userPayload });   // user: userPayload 
   } catch (error) {
-    res.status(StatusCodes.BAD_REQUEST).json({ message: error.message });
+    res.status(StatusCodes.BAD_REQUEST).json({ message: error.message })
   }
+};
+
+//@ Desc current logged in  user
+//@route GET method - /api/v1/users/currect
+const currentUser = async (req, res) => {
+  res.json(req.user);
 };
 
 //@ Desc logout a user
@@ -82,5 +104,8 @@ const logout = async (req, res) => {
 module.exports = {
   registerUser,
   login,
-  logout,
+  currentUser,
+  logout
 };
+
+
