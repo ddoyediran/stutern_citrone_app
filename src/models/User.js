@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt");
 const UserSchema = mongoose.Schema({
   picture: {
     type: String
-    
+
   },
   avatar: {
     type: String
@@ -32,7 +32,7 @@ const UserSchema = mongoose.Schema({
     type: String,
     required: [true, "Please confirm your password"],
     validate: {
-      validator: function(v) {
+      validator: function (v) {
         return v === this.password;
       },
       message: "Passwords do not match"
@@ -44,7 +44,7 @@ const UserSchema = mongoose.Schema({
   },
   phoneNumber: {
     type: Number,
-    
+
   },
   pronouns: {
     type: String,
@@ -52,15 +52,16 @@ const UserSchema = mongoose.Schema({
   },
   track: {
     type: String,
-    enum: ["UI/UX", "Frontend", "Data Science", "Backend"],
-    
+    enum: ["UI/UX", "Frontend Development", "Backend Development",
+      "Data Science", "Mobile Development", "Software Testing",
+      "Blockchain", "DevOps"],
+
   },
   bio: {
     type: String,
   },
   portfolio: {
     type: String,
-    //default: "Link to your portfolio"
   },
 },
   {

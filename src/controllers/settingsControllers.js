@@ -20,7 +20,7 @@ const profileSetting = async (req, res) => {
             req.body,
             { new: true }
         );
-          res.status(StatusCodes.OK).json({ message: "user successfully updated", updatedUser});
+          res.status(StatusCodes.OK).json({ message: "user successfully updated"});
     } catch (error) {
         console.log(error.message);
         res.status(StatusCodes.NOT_FOUND).json({ message: error.message });
