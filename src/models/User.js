@@ -2,11 +2,22 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 
 const UserSchema = mongoose.Schema({
-  name: {
+  picture: {
+    type: String
+    
+  },
+  avatar: {
+    type: String
+  },
+  firstName: {
     type: String,
-    required: [true, "Please provide a name"],
     minlength: 2,
-    maxlength: 50,
+    maxlength: 50
+  },
+  lastName: {
+    type: String,
+    minlength: 2,
+    maxlength: 50
   },
   email: {
     type: String,
@@ -17,10 +28,39 @@ const UserSchema = mongoose.Schema({
     type: String,
     required: [true, "Password is required"],
   },
-  role: {
+  confirmPassword: {
     type: String,
-    enum: ["admin", "student"],
-    default: "student",
+    required: [true, "Please confirm your password"],
+    validate: {
+      validator: function(v) {
+        return v === this.password;
+      },
+      message: "Passwords do not match"
+    }
+  },
+  gender: {
+    type: String,
+    enum: ["Male", "Female", "Non-Binary", "Others"],
+  },
+  phoneNumber: {
+    type: Number,
+    
+  },
+  pronouns: {
+    type: String,
+    enum: ["he/him", "she/her", "they/them", "Others"],
+  },
+  track: {
+    type: String,
+    enum: ["UI/UX", "Frontend", "Data Science", "Backend"],
+    
+  },
+  bio: {
+    type: String,
+  },
+  portfolio: {
+    type: String,
+    //default: "Link to your portfolio"
   },
 },
   {
@@ -31,6 +71,7 @@ const UserSchema = mongoose.Schema({
 UserSchema.pre("save", async function () {
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
+  this.confirmPassword = await bcrypt.hash(this.confirmPassword, salt);
 });
 
 UserSchema.methods.comparePassword = async function (candidatePassword) {
