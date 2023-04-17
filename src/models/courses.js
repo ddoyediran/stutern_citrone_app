@@ -10,7 +10,7 @@ const courseSchema = mongoose.Schema({
     },
     level: {
         type: String,
-        enum: ["Beginner", "Intermediate"]
+        enum: ["Beginner Level", "Intermediate Level"]
     },
     users: {
         type: mongoose.Schema.Types.ObjectId,
