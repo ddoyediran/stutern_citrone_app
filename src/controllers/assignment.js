@@ -10,7 +10,7 @@ const Joi = require("joi");
  */
 
 const schema = Joi.object({
-  submission_link: Joi.string().min(3).required(),
+  submission_field: Joi.string().min(3).required(),
 });
 
 function validate(inputObj) {
@@ -20,83 +20,70 @@ function validate(inputObj) {
 
 /**
  *
- * @desc getAllAssignments function to Submit Assignment
- * @param {req, res, next}
- * @output {*}
- */
-const getAllAssignments = async (req, res, next) => {
-  const users = req.user;
-
-  const findUser = await User.findById(users.userId);
-
-  if (!findUser) {
-    return res.status(StatusCodes.NotFound).json({ msg: "User not found!" });
-  }
-
-  const allAssignments = await findUser.assignments;
-
-  res.status(StatusCodes.OK).json({ assignments: allAssignments });
-};
-
-/**
- *
- * @desc createAssignment function to Submit Assignment
- * @param {req, res, next}
- * @output {*}
- */
-const createAssignment = async (req, res, next) => {
-  const assignmentDesc = req.body.assignmentDesc;
-
-  const assignment = await Assignment.findByIdAndUpdate(
-    req.body.id,
-    {
-      description: assignmentDesc,
-    },
-    { new: true }
-  );
-
-  res.status(StatusCodes.CREATED).json({ assignment: assignment });
-};
-
-/**
- *
  * @desc submitAssignment function to Submit Assignment
  * @param {req, res, next}
- * @output {*}
+ * @output {res} Json response
  */
 const submitAssignment = async (req, res, next) => {
   try {
+    // determine who is trying to submit the assignment
     const user = req.user;
 
-    // check if user details exist
-    // find user in the database and check if user has access to this assignment
-    const findUser = await User.findById(user.userId);
+    // We can validate their input
+    const submission_field = req.body.submission_field;
 
-    if (!findUser) {
-      return res.status(StatusCodes.NOT_FOUND).json({ msg: "User not found!" });
-    }
-
-    const result = validate({ submission_link: req.body.submission_link });
-
-    if (result.error) {
-      res
+    // check if the field is not empty
+    if (!submission_field) {
+      return res
         .status(StatusCodes.BAD_REQUEST)
-        .json({ msg: result.error.details[0].message });
+        .json({ message: "Field cannot be empty!" });
     }
 
-    const findAssignment = await Assignment.findById(req.body.assId);
+    const validationResult = validate({ submission_field });
 
-    findAssignment.submission_link = req.body.submission_link;
+    if (validationResult.error) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ message: validationResult.error.details[0].message });
+    }
 
-    const submit = await findAssignment.save();
+    const assignment = await Assignment.create({
+      ...validationResult.value,
+      status: "Completed",
+      date_submitted: Date.now(),
+      submitted_by: user.userId,
+    });
 
-    res.status(StatusCodes.Success).json({ submit: submit });
+    // update the submitted_assignments field (id) in user model/ collection
+    const student = await User.findByIdAndUpdate(
+      user.userId,
+      {
+        $addToSet: { submitted_assignments: assignment._id },
+      },
+      { new: true }
+    );
+
+    // if no assignment is submitted successfully
+    if (!assignment) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ message: "Assignment not submitted successfully!" });
+    }
+
+    res.status(StatusCodes.CREATED).json({
+      submitted: {
+        due_date: assignment.due_date,
+        date_submitted: assignment.date_submitted,
+        status: assignment.status,
+        submission_field: assignment.submission_field,
+      },
+    });
   } catch (err) {
+    //res.status(StatusCodes.BAD_REQUEST).json({ message: err.message });
     next(err);
   }
 };
 
 module.exports = {
   submitAssignment,
-  createAssignment,
 };

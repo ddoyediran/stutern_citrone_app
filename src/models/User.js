@@ -60,10 +60,10 @@ const UserSchema = mongoose.Schema(
       type: String,
       //default: "Link to your portfolio"
     },
-    assignments: [
+    submitted_assignments: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Assignment",
+        ref: "Assignment", // list of all the assignments that this user (student) has submitted
       },
     ],
   },
