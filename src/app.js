@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 require("dotenv").config();
 const connectDB = require("./db/connect");
-const cookieParser = require("cookie-parser");
+const cookieParser = require("cookie-parser"); 
 const morgan = require("morgan");
 
 const authRoutes = require("./routes/auth");
@@ -10,6 +10,7 @@ const tokenRoute = require("./routes/passwordReset");
 const settingsRoute = require("./routes/settingsRoute");
 const usersRoute = require("./routes/usersRoute");
 const assignmentRoute = require("./routes/assignment");
+
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.use("/api/v1/users", tokenRoute);
 app.use("/api/v1/users", settingsRoute);
 app.use("/api/v1/users", usersRoute);
 app.use("/api/v1/assignments", assignmentRoute);
+
 
 const PORT = process.env.PORT || 3000;
 

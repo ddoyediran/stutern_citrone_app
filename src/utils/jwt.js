@@ -21,6 +21,7 @@ const isTokenValid = async (req, res, next) => {
         if (err) {
           return res.status(401).json({ message: "User is not authorized!" });
           //throw new Error("User is not authorized");
+
         }
         req.user = {
           userId: decoded.userId,
@@ -44,6 +45,7 @@ const isTokenValid = async (req, res, next) => {
     return res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
   }
 };
+
 
 const attachCookiesToResponse = ({ res, user }) => {
   const token = createJWT({ payload: user });

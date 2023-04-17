@@ -8,6 +8,7 @@ const { createUserPayload, attachCookiesToResponse } = require("../utils");
 const registerUser = async (req, res) => {
   try {
     //validation input fields
+
     const {
       picture,
       avatar,
@@ -23,6 +24,7 @@ const registerUser = async (req, res) => {
       bio,
       portfolio,
     } = req.body;
+
     if (!email || !password) {
       res.status(StatusCodes.BAD_REQUEST);
       throw new BadRequestError("All fields are mandatory");
@@ -54,6 +56,7 @@ const registerUser = async (req, res) => {
       _id: user.id,
       email: user.email,
     });
+
   } catch (error) {
     res.status(StatusCodes.BAD_REQUEST).json({ message: error.message });
   }
@@ -75,24 +78,25 @@ const login = async (req, res, next) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      throw new UnauthenticatedError("Username or password incorrect!");
+      throw new UnauthenticatedError("username or password incorrect!");
     }
 
     // comparing the hashed-password from request-body with
     //the password stored in the database
     const isPasswordCorrect = await user.comparePassword(password);
+    
     // email and password is not correct
     if (!isPasswordCorrect) {
-      throw new UnauthenticatedError("Username or password incorrect!");
+      throw new UnauthenticatedError("username or password incorrect!");
     }
-    // add token to the user's payload
+    // add token to the user's payload 
     const userPayload = createUserPayload(user);
     // send the user detail/ payload to the frontend folks.
     const token = attachCookiesToResponse({ res, user: userPayload });
 
     res.status(StatusCodes.OK).json({ user: userPayload, token: token }); // user: userPayload
   } catch (error) {
-    res.status(StatusCodes.BAD_REQUEST).json({ message: error.message });
+    res.status(StatusCodes.BAD_REQUEST).json({ message: error.message })
   }
 };
 
@@ -123,3 +127,5 @@ module.exports = {
   currentUser,
   logout,
 };
+
+

@@ -1,4 +1,5 @@
 const User = require("../models/user.js");
+
 const Token = require("../models/token.js");
 const sendEmail = require("../utils/sendEmails.js");
 const Joi = require("joi");
