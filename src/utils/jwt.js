@@ -19,34 +19,40 @@ const isTokenValid = async (req, res, next) => {
       token = authHeader.split(" ")[1];
       jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
         if (err) {
-          res.status(401);
-          throw new Error("User is not authorized")
+          return res.status(401).json({ message: "User is not authorized!" });
+          //throw new Error("User is not authorized");
+
         }
         req.user = {
           userId: decoded.userId,
           email: decoded.email,
-        }
+        };
         next();
       });
 
       if (!token) {
-        res.status(401);
-        throw new Error("user is not authotized or token missing in the request");
+        // throw new Error(
+        //   "user is not authorized or token missing in the request"
+        // );
+        return res.status(401).json({
+          message: "user is not authorized or token missing in the request",
+        });
       }
     }
+
+    //next();
   } catch (error) {
-    res.status(StatusCodes.BAD_REQUEST).json({ error: error.message});
-
+    return res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
   }
+};
 
-}
 
 const attachCookiesToResponse = ({ res, user }) => {
   const token = createJWT({ payload: user });
   const oneDay = 1000 * 60 * 60 * 24;
   // Creating a secure cookie access token
   res.cookie("token", token, {
-    httpOnly: true,     //accessible only by web-server
+    httpOnly: true, //accessible only by web-server
     expires: new Date(Date.now() + oneDay),
     signed: true,
   });

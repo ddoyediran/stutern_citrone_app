@@ -57,17 +57,22 @@ const UserSchema = mongoose.Schema({
       "Blockchain", "DevOps"],
 
   },
+  submitted_assignments: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Assignment", // list of all the assignments that this user (student) has submitted
+      },
+  ],
   bio: {
     type: String,
   },
   portfolio: {
     type: String,
   },
-},
   {
-    timestamps: true
+    timestamps: true,
   }
-);
+});
 
 UserSchema.pre("save", async function () {
   const salt = await bcrypt.genSalt(10);

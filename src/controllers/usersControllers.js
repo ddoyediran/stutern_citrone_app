@@ -1,4 +1,5 @@
-const User = require("../models/User");
+const User = require("../models/user");
+
 const { StatusCodes } = require("http-status-codes");
 const { BadRequestError, UnauthenticatedError } = require("../errors");
 
@@ -6,19 +7,18 @@ const { BadRequestError, UnauthenticatedError } = require("../errors");
 //@route GET method - /api/v1/users
 
 const getAllUsers = async (req, res) => {
-    try {
-        /** Validating to check for users */
-        const users = await User.find().sort("firstname");
-        if (users.length === 0) {
-            throw new BadRequestError("No usesr currently registered");
-        };
-
-        res.status(StatusCodes.OK).json(users);
-    } catch (error) {
-        res.status(StatusCodes.NOT_FOUND).json({ message: error.message })
+  try {
+    /** Validating to check for users */
+    const users = await User.find().sort("firstname");
+    if (users.length === 0) {
+      throw new BadRequestError("No usesr currently registered");
     }
-};
 
+    res.status(StatusCodes.OK).json(users);
+  } catch (error) {
+    res.status(StatusCodes.NOT_FOUND).json({ message: error.message });
+  }
+};
 
 //@desc Get a user
 //@route GET /api/v1/users/user/:id
