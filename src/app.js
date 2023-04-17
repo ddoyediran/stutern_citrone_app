@@ -7,8 +7,10 @@ const morgan = require("morgan");
 
 const authRoutes = require("./routes/auth");
 const tokenRoute = require("./routes/passwordReset");
-const settingsRoute = require("./routes/settingsRoute")
+const settingsRoute = require("./routes/settingsRoute");
 const usersRoute = require("./routes/usersRoute");
+const assignmentRoute = require("./routes/assignment");
+
 
 const app = express();
 
@@ -21,6 +23,7 @@ app.use("/api/v1/users", authRoutes);
 app.use("/api/v1/users", tokenRoute);
 app.use("/api/v1/users", settingsRoute);
 app.use("/api/v1/users", usersRoute);
+app.use("/api/v1/assignments", assignmentRoute);
 
 
 const PORT = process.env.PORT || 3000;
@@ -31,9 +34,11 @@ const start = async () => {
     // connect to Mongodb
     const connected = await connectDB(process.env.MONGODB_URI);
     if (connected) {
-      console.log("Connected to database:",
-      connected.connection.host,
-      connected.connection.name);
+      console.log(
+        "Connected to database:",
+        connected.connection.host,
+        connected.connection.name
+      );
     }
 
     // start the server here

@@ -1,4 +1,5 @@
-const User = require("../models/User.js");
+const User = require("../models/user.js");
+
 const Token = require("../models/token.js");
 const sendEmail = require("../utils/sendEmails.js");
 const Joi = require("joi");
@@ -10,28 +11,24 @@ const router = express.Router();
 /** This is the implementation for sending password reset link  */
 //@route POST method - /api/v1/sendresetmail
 router.post("/sendresetmail", async (req, res) => {
-     try {
-        const schema = Joi.object({email: Joi.string().email().required()});
-        const {error} = schema.validate(req.body);
-        if(error) return res.status(StatusCodes.BAD_REQUEST).send(error.details[0].message);
+  try {
+    const schema = Joi.object({ email: Joi.string().email().required() });
+    const { error } = schema.validate(req.body);
+    if (error)
+      return res.status(StatusCodes.BAD_REQUEST).send(error.details[0].message);
 
-        const user = await User.findOne({ email });
-        if(!user) return res.status(StatusCodes.BAD_REQUEST).send("user does not exist");
+    const user = await User.findOne({ email });
+    if (!user)
+      return res.status(StatusCodes.BAD_REQUEST).send("user does not exist");
 
-        const token = await Token.findOne({userId: user._id});
-        if(!token) {
-            token = await new Token({
-                userId: user._id,
-                token: crypto.randomBytes(32).toString("hex")
-            }).save();
-        };
-
-
-
-     } catch (error) {
-        
-     }
+    const token = await Token.findOne({ userId: user._id });
+    if (!token) {
+      token = await new Token({
+        userId: user._id,
+        token: crypto.randomBytes(32).toString("hex"),
+      }).save();
+    }
+  } catch (error) {}
 });
-
 
 module.exports = router;

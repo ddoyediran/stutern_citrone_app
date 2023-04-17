@@ -1,5 +1,12 @@
 const router = require("express").Router();
-const { login, logout, registerUser, currentUser } = require("../controllers/auth");
+
+const {
+  login,
+  logout,
+  registerUser,
+  currentUser,
+} = require("../controllers/auth");
+
 const { isTokenValid } = require("../utils/jwt");
 
 router.post("/register", registerUser);
