@@ -49,7 +49,7 @@ const submitAssignment = async (req, res, next) => {
 
     const assignment = await Assignment.create({
       ...validationResult.value,
-      status: "Completed",
+      status: "Awaiting Grade",
       date_submitted: Date.now(),
       submitted_by: user.userId,
     });
@@ -97,6 +97,21 @@ const deleteAssignment = async (req, res, next) => {
     // get the id of the assignment the use is trying to delete
     const assignmentId = req.params.id;
 
+    // check if it the user that owns the assignment
+    const assignment = await Assignment.findById(assignmentId);
+
+    if (!assignment) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ message: "Can't find the assignment!" });
+    }
+
+    if (!assignment.submitted_by.equals(user.userId)) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        message: "You can't delete an assignment that doesn't belongs to you!",
+      });
+    }
+
     // find if the assignment has been submitted or exist in the user collection.
     const updated = await User.findByIdAndUpdate(
       user.userId,
@@ -106,14 +121,10 @@ const deleteAssignment = async (req, res, next) => {
       { new: true }
     );
 
-    // delete it from the user collection (i think this might be needed - leave it for now)
-    if (!updated) {
-      return res
-        .status(StatusCodes.BAD_REQUEST)
-        .json({ message: "Can't find the assignment!" });
-    }
-    // return a response
+    // Find and delete the assignment from the assignment collections
+    const deletedAssignment = await Assignment.findByIdAndRemove(assignmentId);
 
+    // return a response
     res
       .status(StatusCodes.ACCEPTED)
       .json({ message: "Assignment deleted successfully!" });

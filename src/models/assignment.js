@@ -32,8 +32,8 @@ const assignmentsSchema = mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["In progress", "Completed", "Pending", "Graded"],
-    default: "In progress",
+    enum: ["Open", "Awaiting Grade", "Graded"],
+    default: "Open",
   },
   submission_field: {
     type: String,
