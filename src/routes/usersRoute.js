@@ -12,7 +12,7 @@ const router = express.Router();
 //router.use(isTokenValid);
 
 
-router.get("/", getAllUsers);
+router.get("/", isTokenValid, getAllUsers);
 router.get("/user/:id", getUser)
 router.delete("/delete/:id", deleteUser)
 

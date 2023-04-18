@@ -4,6 +4,6 @@ const { isTokenValid } = require("../utils/jwt");
 const router = express.Router();
 
 //router.use(isTokenValid);
-router.put("/settings/profile/:id", profileSetting);
+router.route("/settings/profile/:id").put(isTokenValid, profileSetting);
 
 module.exports = router;

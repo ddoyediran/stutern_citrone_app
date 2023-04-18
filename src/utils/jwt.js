@@ -26,8 +26,13 @@ const isTokenValid = async (req, res, next) => {
         req.user = {
           userId: decoded.userId,
           email: decoded.email,
+<<<<<<< HEAD
+        }
+        
+=======
         };
         next();
+>>>>>>> 2bd1bf4936fcb9f3dd0bcde2f85d4e45e144ee2f
       });
 
       if (!token) {
@@ -39,6 +44,12 @@ const isTokenValid = async (req, res, next) => {
         });
       }
     }
+<<<<<<< HEAD
+    next();
+  } catch (error) {
+    res.status(StatusCodes.BAD_REQUEST).json({ error: error.message});
+=======
+>>>>>>> 2bd1bf4936fcb9f3dd0bcde2f85d4e45e144ee2f
 
     //next();
   } catch (error) {

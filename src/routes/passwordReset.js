@@ -9,7 +9,7 @@ const { StatusCodes } = require("http-status-codes");
 const router = express.Router();
 
 /** This is the implementation for sending password reset link  */
-//@route PUT method - /api/v1/settings/profile/:id
+//@route POST method - /api/v1/sendresetmail
 router.post("/sendresetmail", async (req, res) => {
   try {
     const schema = Joi.object({ email: Joi.string().email().required() });
