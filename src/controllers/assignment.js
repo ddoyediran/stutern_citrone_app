@@ -84,6 +84,45 @@ const submitAssignment = async (req, res, next) => {
   }
 };
 
+/**
+ *
+ * @desc deleteAssignment function to Delete submitted assignment
+ * @param {req, res, next}
+ * @output {res} Json response
+ */
+const deleteAssignment = async (req, res, next) => {
+  try {
+    const user = req.user;
+
+    // get the id of the assignment the use is trying to delete
+    const assignmentId = req.params.id;
+
+    // find if the assignment has been submitted or exist in the user collection.
+    const updated = await User.findByIdAndUpdate(
+      user.userId,
+      {
+        $pull: { submitted_assignments: assignmentId },
+      },
+      { new: true }
+    );
+
+    // delete it from the user collection (i think this might be needed - leave it for now)
+    if (!updated) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ message: "Can't find the assignment!" });
+    }
+    // return a response
+
+    res
+      .status(StatusCodes.ACCEPTED)
+      .json({ message: "Assignment deleted successfully!" });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   submitAssignment,
+  deleteAssignment,
 };
