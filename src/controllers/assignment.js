@@ -85,7 +85,6 @@ const submitAssignment = async (req, res, next) => {
 };
 
 /**
- *
  * @desc deleteAssignment function to Delete submitted assignment
  * @param {req, res, next}
  * @output {res} Json response
@@ -133,7 +132,35 @@ const deleteAssignment = async (req, res, next) => {
   }
 };
 
+/**
+ * @desc getAllAssignments function to Get all assignments for a student
+ * @param {req, res, next}
+ * @output {res} Json response
+ */
+const getAllAssignments = async (req, res, next) => {
+  try {
+    const user = req.user;
+
+    const userDetails = await User.findById(user.userId);
+
+    const assignments = await Assignment.find({
+      _id: { $in: userDetails.submitted_assignments },
+    });
+
+    if (!assignments) {
+      return res
+        .status(StatusCodes.NotFound)
+        .json({ message: "User does not have any assignment!" });
+    }
+
+    res.status(StatusCodes.OK).json({ assignments: assignments });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   submitAssignment,
   deleteAssignment,
+  getAllAssignments,
 };
