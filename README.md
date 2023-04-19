@@ -14,10 +14,10 @@
 
 5. Create `.env` file on the root folder to have `MONGODB_URI`, `PORT` etc.
 
-6. Delete `.gitkeep` file in some of the directory.
+6. Delete `.gitkeep` file in some of the directories.
 
 7. Don't forget to build the feature(s) one at time, remember to test the feature and that it is working before you push to github.
 
-8. Run `git pull origin main` to make sure your branch has the same update/ code with the main branch on github before you start working on new feature(s), to prevent your `yourName_dev_branch` from having several commits behind the main branch.
+8. Run `git pull origin main` to make sure your branch has the same update/ code with the main branch on github before you start working on new feature(s), to prevent your `yourName_dev_branch` from having several commits behind the main branch and after running git pull, run `git push` to keep your github dev branch updated with your local branch (and prevent several commits ahead/behind which can lead to conflicts for the team).
 
 ##### Note: README.md will get constant update, keep an eye on this file

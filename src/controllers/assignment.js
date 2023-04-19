@@ -49,7 +49,7 @@ const submitAssignment = async (req, res, next) => {
 
     const assignment = await Assignment.create({
       ...validationResult.value,
-      status: "Completed",
+      status: "Awaiting Grade",
       date_submitted: Date.now(),
       submitted_by: user.userId,
     });
@@ -84,6 +84,150 @@ const submitAssignment = async (req, res, next) => {
   }
 };
 
+/**
+ * @desc deleteAssignment function to Delete submitted assignment
+ * @param {req, res, next}
+ * @output {res} Json response
+ */
+const deleteAssignment = async (req, res, next) => {
+  try {
+    const user = req.user;
+
+    // get the id of the assignment the use is trying to delete
+    const assignmentId = req.params.id;
+
+    // check if it the user that owns the assignment
+    const assignment = await Assignment.findById(assignmentId);
+
+    if (!assignment) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ message: "Can't find the assignment!" });
+    }
+
+    if (!assignment.submitted_by.equals(user.userId)) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        message: "You can't delete an assignment that doesn't belongs to you!",
+      });
+    }
+
+    // find if the assignment has been submitted or exist in the user collection.
+    const updated = await User.findByIdAndUpdate(
+      user.userId,
+      {
+        $pull: { submitted_assignments: assignmentId },
+      },
+      { new: true }
+    );
+
+    // Find and delete the assignment from the assignment collections
+    const deletedAssignment = await Assignment.findByIdAndRemove(assignmentId);
+
+    // return a response
+    res
+      .status(StatusCodes.ACCEPTED)
+      .json({ message: "Assignment deleted successfully!" });
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * @desc getAllAssignments function to Get all assignments for a student
+ * @param {req, res, next}
+ * @output {res} Json response
+ */
+const getAllAssignments = async (req, res, next) => {
+  try {
+    const user = req.user;
+
+    const userDetails = await User.findById(user.userId);
+
+    const assignments = await Assignment.find({
+      _id: { $in: userDetails.submitted_assignments },
+    });
+
+    if (!assignments) {
+      return res
+        .status(StatusCodes.NotFound)
+        .json({ message: "User does not have any assignment!" });
+    }
+
+    res.status(StatusCodes.OK).json({ assignments: assignments });
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * @desc getOneAssignment function to Get a single assignment for a student
+ * @param {req, res, next}
+ * @output {res} Json response
+ */
+const getOneAssignment = async (req, res, next) => {
+  try {
+    user = req.user;
+
+    const assignment = await Assignment.findById(req.params.id);
+
+    if (!assignment) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ message: "Can't find the assignment!" });
+    }
+
+    if (!assignment.submitted_by.equals(user.userId)) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        message: "You can't get an assignment that doesn't belongs to you!",
+      });
+    }
+
+    res.status(StatusCodes.OK).json({ assignment });
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * @desc getAssignmentGrade function to Get display a grade for an assignment for a student
+ * @param {req, res, next}
+ * @output {res} Json response
+ */
+
+const getAssignmentGrade = async (req, res, next) => {
+  try {
+    const user = req.user;
+
+    const assignment = await Assignment.findById(req.params.id);
+
+    if (!assignment) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ message: "Can't find the assignment!" });
+    }
+
+    if (!assignment.submitted_by.equals(user.userId)) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        message: "You can't get an assignment that doesn't belongs to you!",
+      });
+    }
+
+    if (assignment.status !== "Graded") {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ message: "Assignment has not been graded!" });
+    }
+
+    res.status(StatusCodes.OK).json({ assignment });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   submitAssignment,
+  deleteAssignment,
+  getAllAssignments,
+  getOneAssignment,
+  getAssignmentGrade,
 };

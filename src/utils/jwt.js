@@ -21,12 +21,12 @@ const isTokenValid = async (req, res, next) => {
         if (err) {
           return res.status(401).json({ message: "User is not authorized!" });
           //throw new Error("User is not authorized");
-
         }
         req.user = {
           userId: decoded.userId,
           email: decoded.email,
         };
+        // next();
       });
 
       if (!token) {
@@ -38,12 +38,12 @@ const isTokenValid = async (req, res, next) => {
         // });
       }
     }
+
     next();
   } catch (error) {
     return res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
   }
 };
-
 
 const attachCookiesToResponse = ({ res, user }) => {
   const token = createJWT({ payload: user });
