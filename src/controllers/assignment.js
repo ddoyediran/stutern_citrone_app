@@ -159,8 +159,38 @@ const getAllAssignments = async (req, res, next) => {
   }
 };
 
+/**
+ * @desc getOneAssignment function to Get a single assignment for a student
+ * @param {req, res, next}
+ * @output {res} Json response
+ */
+const getOneAssignment = async (req, res, next) => {
+  try {
+    user = req.user;
+
+    const assignment = await Assignment.findById(req.params.id);
+
+    if (!assignment) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ message: "Can't find the assignment!" });
+    }
+
+    if (!assignment.submitted_by.equals(user.userId)) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        message: "You can't get an assignment that doesn't belongs to you!",
+      });
+    }
+
+    res.status(StatusCodes.OK).json({ assignment });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   submitAssignment,
   deleteAssignment,
   getAllAssignments,
+  getOneAssignment,
 };
