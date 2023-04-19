@@ -188,9 +188,46 @@ const getOneAssignment = async (req, res, next) => {
   }
 };
 
+/**
+ * @desc getAssignmentGrade function to Get display a grade for an assignment for a student
+ * @param {req, res, next}
+ * @output {res} Json response
+ */
+
+const getAssignmentGrade = async (req, res, next) => {
+  try {
+    const user = req.user;
+
+    const assignment = await Assignment.findById(req.params.id);
+
+    if (!assignment) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ message: "Can't find the assignment!" });
+    }
+
+    if (!assignment.submitted_by.equals(user.userId)) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        message: "You can't get an assignment that doesn't belongs to you!",
+      });
+    }
+
+    if (assignment.status !== "Graded") {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ message: "Assignment has not been graded!" });
+    }
+
+    res.status(StatusCodes.OK).json({ assignment });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   submitAssignment,
   deleteAssignment,
   getAllAssignments,
   getOneAssignment,
+  getAssignmentGrade,
 };

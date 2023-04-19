@@ -38,6 +38,9 @@ const assignmentsSchema = mongoose.Schema({
   submission_field: {
     type: String,
   },
+  tutor_comment: {
+    type: String,
+  },
   submitted_by: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User", // Student that submitted this assignment
