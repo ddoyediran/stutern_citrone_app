@@ -30,12 +30,12 @@ const isTokenValid = async (req, res, next) => {
       });
 
       if (!token) {
-        // throw new Error(
-        //   "user is not authorized or token missing in the request"
-        // );
-        return res.status(401).json({
-          message: "user is not authorized or token missing in the request",
-        });
+        throw new Error(
+          "user is not authorized or token missing in the request"
+        );
+        // return res.status(401).json({
+        //   message: "user is not authorized or token missing in the request",
+        // });
       }
     }
 

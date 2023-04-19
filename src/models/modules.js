@@ -1,27 +1,39 @@
 const mongoose = require("mongoose");
 
 const moduleSchema = mongoose.Schema({
-    lessonName: {
-        type: String,
-        required: true
+    module: {
+        name: {
+            type: String,
+            required: true
+        },
+        title: {
+            type: String,
+            required: true
+        }
     },
-    description: {
-        type: String,
-        required: true
+    lesson: {
+        name: {
+            type: String,
+            required: true
+        },
+        title: {
+            type: String,
+            required: true
+        },
+        content: {
+            type: String,
+            required: true
+        },
+        fileUrl: {
+            type: String,
+            required: true
+        }
     },
-    fileUrl: {
-        type: String,
-        required: true
+    liveClassUrl: {
+          type: String,
+          required: true
     },
-    courses: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Course"
-    },
-    liveClassLink: {
-        type: String,
-        required: true
-    },
-    recordedClassLink: {
+    recordedClassUrl: {
         type: String,
         required: true
     }

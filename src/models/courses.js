@@ -1,21 +1,26 @@
 const mongoose = require("mongoose");
 
 const courseSchema = mongoose.Schema({
-    moduleName: {
+    courseName: {
         type: String,
+        enum: ["UI/UX", "Front Development",
+            "Backend Development", "Data Science",
+            "Mobile Development", "Software Testing",
+            "Blockchain", "DevOps"],
         required: true
     },
-    moduleImage: {
-        type: String
-    },
+    modules: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Module"
+    }],
     level: {
         type: String,
         enum: ["Beginner Level", "Intermediate Level"]
     },
-    users: {
+    users: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
-    }
+    }]
 },
     {
         timestamps: true
