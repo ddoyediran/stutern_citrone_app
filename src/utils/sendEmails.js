@@ -38,18 +38,18 @@ const nodemailer = require("nodemailer");
 const sendMail = async (email, subject, text) => {
   try {
     const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      service: "gmail",
+      host: process.env.HOST,
+      service: process.env.SERVICE,
       port: 465,
       secure: true,
       auth: {
-        user: "citroneapp123@gmail.com ",
-        pass: "lwhyohbattgywdgu"
+        user: process.env.USER_MAIL,  
+        pass: process.env.PASS   
       }
     });
 
     const mailOptions = {
-      from: "citroneapp123@gmail.com ",
+      from: process.env.USER_MAIL,
       to: email,
       subject: subject,
       text: text
@@ -58,7 +58,7 @@ const sendMail = async (email, subject, text) => {
     const info = await transporter.sendMail(mailOptions)
     console.log('Email successfully sent: ' + info.response);
   } catch (error) {
-    console.error(error);
+    console.error("Email was not sent: ", error);
     return { sent: false, error: error.message };
   }
 }

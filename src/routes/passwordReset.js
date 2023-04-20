@@ -1,5 +1,5 @@
 const User = require("../models/user.js");
-const { isTokenValid } = require("../utils/jwt");
+//const { isTokenValid } = require("../utils/jwt");
 const Token = require("../models/token.js");
 const sendEmail = require("../utils/sendEmails.js");
 const Joi = require("joi");
@@ -9,7 +9,7 @@ const { StatusCodes } = require("http-status-codes");
 const router = express.Router();
 
 /** This is the implementation for sending password reset link  */
-//@route POST method - /api/v1/password-reset
+//@route POST method - /api/v1/users/password-reset
 router.post("/password-reset", async (req, res) => {
     try {
         const schema = Joi.object({ email: Joi.string().email().required() });
@@ -23,24 +23,32 @@ router.post("/password-reset", async (req, res) => {
         if (!user)
             return res.status(StatusCodes.BAD_REQUEST).send("user does not exist");
 
-        let token = await Token.findOne({ userId: user._id });
-        if (!token) {
-            token = await new Token({
+           let token = await new Token({
                 userId: user._id,
                 token: crypto.randomBytes(32).toString("hex"),
             }).save();
-        };
-        const link = `${process.env.BASE_URL}/password-reset/${user._id}/${token.token}`;
-        await sendEmail(user.email, "password reset", link);
-        res.status(StatusCodes.OK).json("password reset link sent to your email address");
+        //let token = await Token.findOne({ userId: user._id });
+        //console.log("Token check: ", token)
+        // if (!token) {
+        //     token = await new Token({
+        //         userId: user._id,
+        //         token: crypto.randomBytes(32).toString("hex"),
+        //     }).save();
+        // };
+        //${user.firstName} ${user.lastName}
+        const link = `Dear Subscriber, 
+        You recently requested to reset your password. 
+        Please click on the link below to reset your password:
+        ${process.env.BASE_URL}/password-reset/${user._id}/${token.token}`; //http://${req.headers.host}
+        await sendEmail(user.email, "PASSWORD RESET", link);
+        res.status(StatusCodes.OK).json("Password reset link has been sent to your email address");
     } catch (error) {
         res.status(StatusCodes.BAD_REQUEST).json(error.message);
-        console.log(error);
     }
 });
 
 /** This is the implementation for reseting the password */
-//@route POST method - /api/v1/password-reset/:userId/:token
+//@route POST method - /api/v1/users/password-reset/:userId/:token
 
 router.post("/password-reset/:userId/:token", async (req, res) => {
     try {
@@ -66,7 +74,7 @@ router.post("/password-reset/:userId/:token", async (req, res) => {
         });
 
         if (!token)
-            return res.status(StatusCodes.BAD_REQUEST).send("invalid link or expired");
+            return res.status(StatusCodes.BAD_REQUEST).send("The link is invalid or expired");
 
         user.password = req.body.password;
         user.confirmPassword = req.body.confirmPassword;
@@ -78,10 +86,10 @@ router.post("/password-reset/:userId/:token", async (req, res) => {
             await token.delete();
         }
 
-        res.status(StatusCodes.OK).json("Password successfully reset");
+        res.status(StatusCodes.OK).json("Password was successfully reset");
 
     } catch (error) {
-        res.status(StatusCodes.BAD_REQUEST).json("An error occured");
+        res.status(StatusCodes.BAD_REQUEST).json({message: "An error occured", error: error.message});
         console.log(error);
     }
 })

@@ -10,6 +10,7 @@ const passwordReset = require("./routes/passwordReset");
 const settingsRoute = require("./routes/settingsRoute");
 const usersRoute = require("./routes/usersRoute");
 const assignmentRoute = require("./routes/assignment");
+const coursesRoute = require("./routes/courses")
 
 
 const app = express();
@@ -25,6 +26,7 @@ app.use("/api/v1/users", passwordReset);
 app.use("/api/v1/users", settingsRoute);
 app.use("/api/v1/users", usersRoute);
 app.use("/api/v1/assignments", assignmentRoute);
+app.use("/api/v1/users", coursesRoute)
 
 
 const PORT = process.env.PORT || 3000;
