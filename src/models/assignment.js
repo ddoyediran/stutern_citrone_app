@@ -24,6 +24,9 @@ const assignmentsSchema = mongoose.Schema({
   date_submitted: {
     type: Date,
   },
+  title: {
+    type: String,
+  },
   description: {
     type: String,
   },
