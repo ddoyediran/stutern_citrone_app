@@ -17,7 +17,7 @@ const getUserDetails = async (req, res, next) => {
 
     if (!userDetails) {
       return res
-        .status(StatusCodes.BAD_REQUEST)
+        .status(StatusCodes.NOT_FOUND)
         .json({ message: "User not found!" });
     }
 
