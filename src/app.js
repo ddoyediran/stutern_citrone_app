@@ -12,6 +12,7 @@ const settingsRoute = require("./routes/settingsRoute");
 const usersRoute = require("./routes/usersRoute");
 const assignmentRoute = require("./routes/assignment");
 const dashboardRoute = require("./routes/dashboard");
+const communityRoute = require("./routes/community");
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.use("/api/v1/users", settingsRoute);
 app.use("/api/v1/users", usersRoute);
 app.use("/api/v1/assignments", assignmentRoute);
 app.use("/api/v1/users", dashboardRoute);
+app.use("/api/v1/users", communityRoute);
 
 const PORT = process.env.PORT || 3000;
 
