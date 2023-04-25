@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const courseSchema = mongoose.Schema(
   {
-    courseName: {
+    track: {
       type: String,
       enum: [
         "UI/UX",
