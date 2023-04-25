@@ -6,8 +6,23 @@ const { BadRequestError, UnauthenticatedError } = require("../errors");
 /** This is the implementation for getting all courses  */
 //@route GET method - /api/v1/users/courses
 const getAllCourses = async (req, res) => {
-    const courses = await Course.find();
-  res.json({ courses: courses });
+  try {
+    const user = req.user;
+
+    const signedInUser = await User.findById(user.userId);
+
+    const courses = await Course.find({ track: signedInUser.track });
+
+    if (!courses) {
+      return res
+        .status(StatusCodes.NotFound)
+        .json({ message: "You need to be added to a track!" });
+    }
+
+    res.status(StatusCodes.OK).json({ courses: courses });
+  } catch (err) {
+    next(err);
+  }
 };
 
 /** This is the implementation for getting a single course */
@@ -19,7 +34,6 @@ const getCourse = async (req, res) => {
     const course = await Course.findById(req.params.id);
 
     const student = await User.findById(user.userId);
-    
 
     //const allStudents = await User.find();
 
@@ -35,13 +49,15 @@ const getCourse = async (req, res) => {
       return res
         .status(StatusCodes.NOT_FOUND)
         .json("Update your track on your student profile");
-    };
+    }
 
-    await course.populate("studentsEnrolled", {firstName: 1, _id: 0})
+    await course.populate("studentsEnrolled", { firstName: 1, _id: 0 });
 
     res.status(StatusCodes.OK).json({ course });
   } catch (err) {
-    res.status(StatusCodes.NOT_FOUND).json({ message: err.message, stack: err.stack });
+    res
+      .status(StatusCodes.NOT_FOUND)
+      .json({ message: err.message, stack: err.stack });
   }
 };
 
@@ -49,33 +65,33 @@ const getCourse = async (req, res) => {
 //@route POST method - /api/v1/users/course/create
 
 const createCourse = async (req, res) => {
-    try {
-      const { track, modules, level, studentsEnrolled } = req.body;
-      // validate the input field
-      if (!track || !level) {
-        return res
-          .status(StatusCodes.BAD_REQUEST)
-          .json("All fields are mandatory!");
-      }
+  try {
+    const { track, modules, level, studentsEnrolled } = req.body;
+    // validate the input field
+    if (!track || !level) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json("All fields are mandatory!");
+    }
 
-       // find all the users with the same track
+    // find all the users with the same track
     const enrolledStudents = await User.find({ track });
 
-     // extract the _id field from each of the user documents
-     const studentIds = enrolledStudents.map((student) => student._id);
-  
-      const createdCourse = await Course.create({
-        track,
-        modules,
-        level,
-        studentsEnrolled: studentIds,
-      });
-  
-      res.status(StatusCodes.CREATED).json({ course: createdCourse });
-    } catch (err) {
-      res.status(StatusCodes.BAD_REQUEST).json({ error: err.message });
-    }
-  };
+    // extract the _id field from each of the user documents
+    const studentIds = enrolledStudents.map((student) => student._id);
+
+    const createdCourse = await Course.create({
+      track,
+      modules,
+      level,
+      studentsEnrolled: studentIds,
+    });
+
+    res.status(StatusCodes.CREATED).json({ course: createdCourse });
+  } catch (err) {
+    res.status(StatusCodes.BAD_REQUEST).json({ error: err.message });
+  }
+};
 // const createCourse = async (req, res) => {
 //   try {
 //     const { courseName, modules, level, studentsEnrolled } = req.body;
