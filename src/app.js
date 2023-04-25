@@ -11,6 +11,7 @@ const passwordReset = require("./routes/passwordReset");
 const settingsRoute = require("./routes/settingsRoute");
 const usersRoute = require("./routes/usersRoute");
 const assignmentRoute = require("./routes/assignment");
+const coursesRoute = require("./routes/courses")
 const dashboardRoute = require("./routes/dashboard");
 const communityRoute = require("./routes/community");
 
@@ -28,6 +29,7 @@ app.use("/api/v1/users", passwordReset);
 app.use("/api/v1/users", settingsRoute);
 app.use("/api/v1/users", usersRoute);
 app.use("/api/v1/assignments", assignmentRoute);
+app.use("/api/v1/users", coursesRoute)
 app.use("/api/v1/users", dashboardRoute);
 app.use("/api/v1/users", communityRoute);
 
