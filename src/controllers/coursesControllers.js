@@ -6,6 +6,8 @@ const { BadRequestError, UnauthenticatedError } = require("../errors");
 /** This is the implementation for getting all courses  */
 //@route GET method - /api/v1/users/courses
 const getAllCourses = async (req, res) => {
+    const user = req.user;
+    
     const courses = await Course.find();
   res.json({ courses: courses });
 };
@@ -59,6 +61,7 @@ const createCourse = async (req, res) => {
       }
 
        // find all the users with the same track
+       // Note that the track field is used to filter the enrolled students. 
     const enrolledStudents = await User.find({ track });
 
      // extract the _id field from each of the user documents
