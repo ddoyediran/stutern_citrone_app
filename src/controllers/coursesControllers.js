@@ -6,6 +6,7 @@ const { BadRequestError, UnauthenticatedError } = require("../errors");
 /** This is the implementation for getting all courses  */
 //@route GET method - /api/v1/users/courses
 const getAllCourses = async (req, res) => {
+
   try {
     const user = req.user;
 
@@ -23,6 +24,7 @@ const getAllCourses = async (req, res) => {
   } catch (err) {
     next(err);
   }
+
 };
 
 /** This is the implementation for getting a single course */
@@ -65,16 +67,18 @@ const getCourse = async (req, res) => {
 //@route POST method - /api/v1/users/course/create
 
 const createCourse = async (req, res) => {
-  try {
-    const { track, modules, level, studentsEnrolled } = req.body;
-    // validate the input field
-    if (!track || !level) {
-      return res
-        .status(StatusCodes.BAD_REQUEST)
-        .json("All fields are mandatory!");
-    }
+    try {
+      const { track, modules, level, studentsEnrolled } = req.body;
+      // validate the input field
+      if (!track || !level) {
+        return res
+          .status(StatusCodes.BAD_REQUEST)
+          .json("All fields are mandatory!");
+      }
 
-    // find all the users with the same track
+       // find all the users with the same track
+       // Note that the track field is used to filter the enrolled students. 
+
     const enrolledStudents = await User.find({ track });
 
     // extract the _id field from each of the user documents
