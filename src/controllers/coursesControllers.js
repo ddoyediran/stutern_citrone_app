@@ -5,8 +5,7 @@ const { BadRequestError, UnauthenticatedError } = require("../errors");
 
 /** This is the implementation for getting all courses  */
 //@route GET method - /api/v1/users/courses
-const getAllCourses = async (req, res) => {
-
+const getAllCourses = async (req, res, next) => {
   try {
     const user = req.user;
 
@@ -22,9 +21,8 @@ const getAllCourses = async (req, res) => {
 
     res.status(StatusCodes.OK).json({ courses: courses });
   } catch (err) {
-    next(err);
+    next(err.message);
   }
-
 };
 
 /** This is the implementation for getting a single course */
@@ -44,13 +42,13 @@ const getCourse = async (req, res) => {
     if (!course) {
       return res
         .status(StatusCodes.NOT_FOUND)
-        .json("Course currently not available!");
+        .json({ message: "Course currently not available!" });
     }
 
     if (course.track !== student.track) {
       return res
         .status(StatusCodes.NOT_FOUND)
-        .json("Update your track on your student profile");
+        .json({ message: "Update your track on your student profile" });
     }
 
     await course.populate("studentsEnrolled", { firstName: 1, _id: 0 });
@@ -67,17 +65,17 @@ const getCourse = async (req, res) => {
 //@route POST method - /api/v1/users/course/create
 
 const createCourse = async (req, res) => {
-    try {
-      const { track, modules, level, studentsEnrolled } = req.body;
-      // validate the input field
-      if (!track || !level) {
-        return res
-          .status(StatusCodes.BAD_REQUEST)
-          .json("All fields are mandatory!");
-      }
+  try {
+    const { track, modules, level, studentsEnrolled } = req.body;
+    // validate the input field
+    if (!track || !level) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ message: "All fields are mandatory!" });
+    }
 
-       // find all the users with the same track
-       // Note that the track field is used to filter the enrolled students. 
+    // find all the users with the same track
+    // Note that the track field is used to filter the enrolled students.
 
     const enrolledStudents = await User.find({ track });
 
