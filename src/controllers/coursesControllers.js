@@ -5,7 +5,7 @@ const { BadRequestError, UnauthenticatedError } = require("../errors");
 
 /** This is the implementation for getting all courses  */
 //@route GET method - /api/v1/users/courses
-const getAllCourses = async (req, res, next) => {
+const getStudentCourses = async (req, res, next) => {
   try {
     const user = req.user;
 
@@ -124,7 +124,7 @@ const updateCourse = async (req, res) => {
 };
 
 module.exports = {
-  getAllCourses,
+  getStudentCourses,
   getCourse,
   createCourse,
   updateCourse,
