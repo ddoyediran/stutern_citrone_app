@@ -26,19 +26,15 @@ const isTokenValid = async (req, res, next) => {
           userId: decoded.userId,
           email: decoded.email,
         };
-        // next();
+        
       });
 
       if (!token) {
         throw new Error(
           "user is not authorized or token missing in the request"
         );
-        // return res.status(401).json({
-        //   message: "user is not authorized or token missing in the request",
-        // });
       }
     }
-
     next();
   } catch (error) {
     return res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });

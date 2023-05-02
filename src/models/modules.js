@@ -1,46 +1,53 @@
 const mongoose = require("mongoose");
 
-const moduleSchema = mongoose.Schema({
-    module: {
-        name: {
-            type: String,
-            required: true
-        },
-        title: {
-            type: String,
-            required: true
-        }
-    },
-    lesson: {
-        name: {
-            type: String,
-            required: true
-        },
-        title: {
-            type: String,
-            required: true
-        },
-        content: {
-            type: String,
-            required: true
-        },
-        fileUrl: {
-            type: String,
-            required: true
-        }
-    },
-    liveClassUrl: {
-          type: String,
-          required: true
-    },
-    recordedClassUrl: {
+const moduleSchema = mongoose.Schema(
+  {
+    courseModule: {
+      name: {
         type: String,
-        required: true
-    }
-},
-    {
-        timestamps: true
-    }
-)
+        required: true,
+      },
+      title: {
+        type: String,
+        required: true,
+      },
+      modulePicture: {
+        type: String,
+      },
+    },
+    lessons: [{
+      name: {
+        type: String,
+        required: true,
+      },
+      title: {
+        type: String,
+        required: true,
+      },
+      description: {
+        type: String,
+        required: true,
+      },
+      fileURL: {
+        type: String,
+        required: true,
+      },
+    }],
+    liveClassURL: {
+      type: String,
+      required: true,
+    },
+    recordedClassURL: {
+      type: String,
+    },
+    course: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Course",
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
 module.exports = mongoose.model("Module", moduleSchema);

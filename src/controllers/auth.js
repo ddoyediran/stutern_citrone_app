@@ -52,7 +52,7 @@ const registerUser = async (req, res) => {
       bio,
       portfolio,
     });
-    res.status(StatusCodes.CREATED).json({
+    res.status(StatusCodes.CREATED).json({ message: "User successfuly created",
       _id: user.id,
       email: user.email,
     });
@@ -109,7 +109,7 @@ const currentUser = async (req, res) => {
 
 //@ Desc logout a user
 //@route GET method - /api/v1/users/logout
-const logout = async (req, res) => {
+const logout = async (req, res, next) => {
   try {
     res.cookie("token", "logout", {
       httpOnly: true,

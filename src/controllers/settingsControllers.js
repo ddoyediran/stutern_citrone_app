@@ -1,9 +1,8 @@
-
 const User = require("../models/user");
 const { StatusCodes } = require("http-status-codes");
 const { BadRequestError, UnauthenticatedError } = require("../errors");
 
-//@desc Updarting user's Profile
+//@desc Updating user's Profile
 //@route PUT method - /api/v1/settings/profile/:id
 const profileSetting = async (req, res) => {
   try {
@@ -14,13 +13,13 @@ const profileSetting = async (req, res) => {
     }
     /** Updating the existing user */
     const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {
+      fields: { password: 0, confirmPassword: 0, submitted_assignments: 0 },
       new: true,
     });
     res
       .status(StatusCodes.OK)
       .json({ message: "user successfully updated", updatedUser });
   } catch (error) {
-    console.log(error.message);
     res.status(StatusCodes.NOT_FOUND).json({ message: error.message });
   }
 };
