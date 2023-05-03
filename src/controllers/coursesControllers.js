@@ -13,10 +13,10 @@ const getStudentCourses = async (req, res, next) => {
 
     const courses = await Course.find({ track: signedInUser.track });
 
-    if (!courses) {
+    if (courses.length === 0) {
       return res
         .status(StatusCodes.NotFound)
-        .json({ message: "You need to be added to a track!" });
+        .json({ message: "No course available or You need to update track in profile settings!" });
     }
 
     res.status(StatusCodes.OK).json({ courses: courses });
@@ -37,7 +37,7 @@ const getCourse = async (req, res) => {
 
     //const allStudents = await User.find();
 
-    //console.log(allStudents);
+    
 
     if (!course) {
       return res
@@ -62,7 +62,7 @@ const getCourse = async (req, res) => {
 };
 
 /** This is the implementation for creating a course */
-//@route POST method - /api/v1/users/course/create
+//@route POST method - /api/v1/users/courses /create
 
 const createCourse = async (req, res) => {
   try {

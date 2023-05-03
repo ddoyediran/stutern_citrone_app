@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const { isTokenValid } = require("../utils/jwt");
 
 const {
   getAllModules,
@@ -6,8 +7,8 @@ const {
   createModule,
 } = require("../controllers/moduleController");
 
-router.get("/modules", getAllModules);
+router.get("/modules", isTokenValid, getAllModules);
 router.get("/modules/:id", getModule);
-router.post("/modules/:courseId", createModule);
+router.post("/modules/:courseId", isTokenValid, createModule);
 
 module.exports = router;

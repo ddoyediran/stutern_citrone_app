@@ -15,7 +15,7 @@ const moduleSchema = mongoose.Schema(
         type: String,
       },
     },
-    lesson: {
+    lessons: [{
       name: {
         type: String,
         required: true,
@@ -24,20 +24,20 @@ const moduleSchema = mongoose.Schema(
         type: String,
         required: true,
       },
-      content: {
+      description: {
         type: String,
         required: true,
       },
-      fileUrl: {
+      fileURL: {
         type: String,
         required: true,
       },
-    },
-    liveClassUrl: {
+    }],
+    liveClassURL: {
       type: String,
       required: true,
     },
-    recordedClassUrl: {
+    recordedClassURL: {
       type: String,
     },
     course: {

@@ -15,6 +15,7 @@ const coursesRoute = require("./routes/courses");
 const dashboardRoute = require("./routes/dashboard");
 const communityRoute = require("./routes/community");
 const moduleRoute = require("./routes/module");
+const quizRoute = require("./routes/quiz")
 
 const app = express();
 
@@ -34,6 +35,7 @@ app.use("/api/v1/users", coursesRoute);
 app.use("/api/v1/users", dashboardRoute);
 app.use("/api/v1/users", communityRoute);
 app.use("/api/v1/users", moduleRoute);
+app.use("/api/v1/users", quizRoute);
 
 const PORT = process.env.PORT || 3000;
 

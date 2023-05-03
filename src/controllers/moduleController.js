@@ -20,103 +20,54 @@ const getAllModules = async (req, res, next) => {
   }
 };
 
-const getModule = async (req, res, next) => {};
+const getModule = async (req, res, next) => {
+
+};
 
 /** This is the implementation for create a module  */
 //@route POST method - /api/v1/users/modules/:courseId
 const createModule = async (req, res, next) => {
   try {
+    //checking to see if a particular courses exists
     const course = await Course.findById(req.params.courseId);
-
     if (!course) {
       return res
-        .status(StatusCodes)
+        .status(StatusCodes.NOT_FOUND)
         .json({ message: "Course does not exist!" });
     }
 
-    const courseModule = {
-      name: req.body.name,
-      title: req.body.title,
-    };
-
-    const lesson = {
-      name: req.body.lessonName,
-      title: req.body.lessonTitle,
-      fileUrl: req.body.fileUrl,
-      content: req.body.content,
-    };
-
-    const { liveClassUrl, recordedClassUrl } = req.body;
-
-    // const lesson = {};
-
-    // module: {
-    //     name: "Your module name",
-    //     title: "Your module title"
-    //   }
-
-    //const { moduleName, moduleTitle} = req.body
-
-    //console.log("working here");
-
-    // const {
-    //   courseModule: { name: moduleName, title, modulePicture },
-    //   lesson: { name: lessonName, title: lessonTitle, content, fileUrl },
-    //   liveClassUrl,
-    //   recordedClassUrl,
-    // } = req.body;
-
-    //console.log(err.stack);
-    //console.log(req.body);
-
-    if (
-      !courseModule.name ||
-      !courseModule.title ||
-      !lesson.name ||
-      !lesson.title ||
-      !lesson.content ||
-      !lesson.fileUrl ||
-      !liveClassUrl
-    ) {
+    //validating input fields 
+    const { name, title, modulePicture, lessons, liveClassURL, recordedClassURL } = req.body;
+    if (!name || !title || !lessons || !liveClassURL) {
       return res
         .status(StatusCodes.BAD_REQUEST)
         .json({ message: "All fields mandatory!" });
     }
-
-    //const moduleExist = await Module.exists({ courseModule });
-    //const moduleExist = await Module.find(courseModule.name);
-
+    const moduleExist = await Module.findOne({
+      "courseModule.title": title,
+      "course": course._id,
+    });
     if (moduleExist) {
       return res
         .status(StatusCodes.BAD_REQUEST)
         .json({ message: "Module already created!" });
     }
-
     const createdModule = await Module.create({
-      courseModule: {
-        name: req.body.name,
-        title: req.body.title,
-        modulePicture: req.body.modulePicture,
-      },
-      lesson: {
-        name: req.body.lessonName,
-        title: req.body.lessonTitle,
-        content: req.body.content,
-        fileUrl: req.body.fileUrl,
-      },
-      liveClassUrl: req.body.liveClassUrl,
-      recordedClassUrl: req.body.recordedClassUrl,
+      courseModule: { name, title, modulePicture },
+      lessons: [{
+        name: lessons[0].lessonName,
+        title: lessons[0].lessonTitle,
+        description: lessons[0].description,
+        fileURL: lessons[0].fileURL,
+      }],
+      liveClassURL,
+      recordedClassURL,
       course: course._id,
     });
-
     course.modules.addToSet(createdModule._id);
-
-    course.save();
-
+    await course.save();
     res.status(StatusCodes.CREATED).json({ module: createdModule });
   } catch (err) {
-    console.log(err.stack);
-    console.log(err.message);
     next(err.message);
   }
 };
