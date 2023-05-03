@@ -6,6 +6,9 @@ const UserSchema = mongoose.Schema(
     picture: {
       type: String,
     },
+    cloudinary_id: {
+      type: String,
+    },
     avatar: {
       type: String,
     },
