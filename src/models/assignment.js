@@ -41,6 +41,9 @@ const assignmentsSchema = mongoose.Schema({
   submission_field: {
     type: String,
   },
+  submitted_file: {
+    type: String,
+  },
   tutor_comment: {
     type: String,
   },

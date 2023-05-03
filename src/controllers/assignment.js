@@ -2,6 +2,8 @@ const Assignment = require("../models/assignment");
 const User = require("../models/user");
 const { StatusCodes } = require("http-status-codes");
 const Joi = require("joi");
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" });
 
 /**
  * Helper method to validate client input
@@ -24,6 +26,7 @@ function validate(inputObj) {
  * @param {req, res, next}
  * @output {res} Json response
  */
+// to handle number of uploads and file fields
 const submitAssignment = async (req, res, next) => {
   try {
     // determine who is trying to submit the assignment
@@ -31,6 +34,9 @@ const submitAssignment = async (req, res, next) => {
 
     // We can validate their input
     const submission_field = req.body.submission_field;
+    const submitted_file = {
+      data: req.files,
+    };
 
     // check if the field is not empty
     if (!submission_field) {
@@ -52,6 +58,7 @@ const submitAssignment = async (req, res, next) => {
       status: "Awaiting Grade",
       date_submitted: Date.now(),
       submitted_by: user.userId,
+      submitted_file: submitted_file,
     });
 
     // update the submitted_assignments field (id) in user model/ collection
@@ -76,11 +83,12 @@ const submitAssignment = async (req, res, next) => {
         date_submitted: assignment.date_submitted,
         status: assignment.status,
         submission_field: assignment.submission_field,
+        submitted_file: assignment.submitted_file,
       },
     });
   } catch (err) {
     //res.status(StatusCodes.BAD_REQUEST).json({ message: err.message });
-    next(err);
+    next(err.message);
   }
 };
 
