@@ -2,8 +2,7 @@ const Assignment = require("../models/assignment");
 const User = require("../models/user");
 const { StatusCodes } = require("http-status-codes");
 const Joi = require("joi");
-const multer = require("multer");
-const upload = multer({ dest: "uploads/" });
+const cloudinary = require("../utils/cloudinary");
 
 /**
  * Helper method to validate client input
@@ -34,9 +33,6 @@ const submitAssignment = async (req, res, next) => {
 
     // We can validate their input
     const submission_field = req.body.submission_field;
-    const submitted_file = {
-      data: req.files,
-    };
 
     // check if the field is not empty
     if (!submission_field) {
@@ -53,12 +49,18 @@ const submitAssignment = async (req, res, next) => {
         .json({ message: validationResult.error.details[0].message });
     }
 
+    // upload the file to cloudinary
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      resource_type: "raw", // other options "auto", "video"
+    });
+
     const assignment = await Assignment.create({
       ...validationResult.value,
       status: "Awaiting Grade",
       date_submitted: Date.now(),
       submitted_by: user.userId,
-      submitted_file: submitted_file,
+      submitted_file: result.secure_url, // the file wil automatically download
+      cloudinary_id: result.public_id,
     });
 
     // update the submitted_assignments field (id) in user model/ collection
@@ -79,11 +81,13 @@ const submitAssignment = async (req, res, next) => {
 
     res.status(StatusCodes.CREATED).json({
       submitted: {
+        _id: assignment._id,
         due_date: assignment.due_date,
         date_submitted: assignment.date_submitted,
         status: assignment.status,
         submission_field: assignment.submission_field,
         submitted_file: assignment.submitted_file,
+        cloudinary_id: assignment.cloudinary_id,
       },
     });
   } catch (err) {
@@ -118,6 +122,11 @@ const deleteAssignment = async (req, res, next) => {
         message: "You can't delete an assignment that doesn't belongs to you!",
       });
     }
+
+    // delete the file from cloudinary
+    const deleteFile = await cloudinary.uploader.destroy(
+      assignment.cloudinary_id
+    );
 
     // find if the assignment has been submitted or exist in the user collection.
     const updated = await User.findByIdAndUpdate(
