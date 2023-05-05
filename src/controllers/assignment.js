@@ -49,18 +49,22 @@ const submitAssignment = async (req, res, next) => {
         .json({ message: validationResult.error.details[0].message });
     }
 
+    let result = {};
+
     // upload the file to cloudinary
-    const result = await cloudinary.uploader.upload(req.file.path, {
-      resource_type: "raw", // other options "auto", "video"
-    });
+    if (req.file) {
+      result = await cloudinary.uploader.upload(req.file.path, {
+        resource_type: "raw", // other options "auto", "video"
+      });
+    }
 
     const assignment = await Assignment.create({
       ...validationResult.value,
       status: "Awaiting Grade",
       date_submitted: Date.now(),
       submitted_by: user.userId,
-      submitted_file: result.secure_url, // the file wil automatically download
-      cloudinary_id: result.public_id,
+      submitted_file: result.secure_url || "", // the file wil automatically download
+      cloudinary_id: result.public_id || "",
     });
 
     // update the submitted_assignments field (id) in user model/ collection
