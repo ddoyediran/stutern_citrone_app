@@ -26,7 +26,6 @@ const isTokenValid = async (req, res, next) => {
           userId: decoded.userId,
           email: decoded.email,
         };
-        
       });
 
       if (!token) {

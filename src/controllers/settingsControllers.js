@@ -14,16 +14,16 @@ const profileSetting = async (req, res) => {
     }
 
     // upload profile picture to cloudinary
-    const result = await cloudinary.uploader.upload(req.file.path);
+    //const result = await cloudinary.uploader.upload(req.file.path);
 
-    // let result = {
-    //   secure_url: "",
-    //   public_id: "",
-    // };
+    let result = {
+      secure_url: user.picture || "",
+      public_id: user.cloudinary_id || "",
+    };
 
-    // if (req.file.path) {
-    //   result = await cloudinary.uploader.upload(req.file.path);
-    // }
+    if (req.file) {
+      result = await cloudinary.uploader.upload(req.file.path);
+    }
 
     /** Updating the existing user */
     const updatedUser = await User.findByIdAndUpdate(
