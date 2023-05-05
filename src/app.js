@@ -15,7 +15,7 @@ const coursesRoute = require("./routes/courses");
 const dashboardRoute = require("./routes/dashboard");
 const communityRoute = require("./routes/community");
 const moduleRoute = require("./routes/module");
-const quizRoute = require("./routes/quiz")
+const quizRoute = require("./routes/quiz");
 
 const app = express();
 
@@ -30,7 +30,7 @@ app.use("/api/v1/users", authRoutes);
 app.use("/api/v1/users", passwordReset);
 app.use("/api/v1/users", settingsRoute);
 app.use("/api/v1/users", usersRoute);
-app.use("/api/v1/assignments", assignmentRoute);
+app.use("/api/v1/users/assignments", assignmentRoute);
 app.use("/api/v1/users", coursesRoute);
 app.use("/api/v1/users", dashboardRoute);
 app.use("/api/v1/users", communityRoute);
