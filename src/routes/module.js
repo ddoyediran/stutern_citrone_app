@@ -8,7 +8,7 @@ const {
 } = require("../controllers/moduleController");
 
 router.get("/modules", isTokenValid, getAllModules);
-router.get("/modules/:id", getModule);
+router.get("/modules/:moduleId", getModule);
 router.post("/modules/:courseId", isTokenValid, createModule);
 
 module.exports = router;
