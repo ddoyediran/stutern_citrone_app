@@ -16,6 +16,8 @@ const dashboardRoute = require("./routes/dashboard");
 const communityRoute = require("./routes/community");
 const moduleRoute = require("./routes/module");
 const quizRoute = require("./routes/quiz");
+const postRoute  = require("./routes/post");
+const replyRoute  = require("./routes/reply");
 
 const app = express();
 
@@ -36,6 +38,8 @@ app.use("/api/v1/users", dashboardRoute);
 app.use("/api/v1/users", communityRoute);
 app.use("/api/v1/users", moduleRoute);
 app.use("/api/v1/users", quizRoute);
+app.use("/api/v1/users", postRoute);
+app.use("/api/v1/users", replyRoute);
 
 const PORT = process.env.PORT || 3000;
 

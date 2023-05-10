@@ -46,4 +46,31 @@ const profileSetting = async (req, res) => {
   }
 };
 
-module.exports = { profileSetting };
+
+//@desc Updating user's Profile
+//@route PUT method - /api/v1/settings/security/:id
+const securitySetting = async (req, res, next) => {
+  try {
+    //cheking if user exists
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ success: "false", message: "User not found" });
+    }
+
+    await User.findByIdAndUpdate(req.params.id,
+      ...req.body,
+      {
+        new: true,
+      })
+
+    res
+      .status(StatusCodes.OK)
+      .json({ message: "security settings successfully updated" })
+  } catch (error) {
+    next(error);
+  }
+}
+
+module.exports = { profileSetting, securitySetting };
