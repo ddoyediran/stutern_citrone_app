@@ -32,7 +32,7 @@ app.use("/api/v1/users", authRoutes);
 app.use("/api/v1/users", passwordReset);
 app.use("/api/v1/users", settingsRoute);
 app.use("/api/v1/users", usersRoute);
-app.use("/api/v1/assignments", assignmentRoute);
+app.use("/api/v1/users/assignments", assignmentRoute);
 app.use("/api/v1/users", coursesRoute);
 app.use("/api/v1/users", dashboardRoute);
 app.use("/api/v1/users", communityRoute);
