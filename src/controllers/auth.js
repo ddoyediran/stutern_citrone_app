@@ -52,11 +52,19 @@ const registerUser = async (req, res) => {
       bio,
       portfolio,
     });
-    res.status(StatusCodes.CREATED).json({ message: "User successfuly created",
+
+    // add token to the user's payload
+    const userPayload = createUserPayload(user);
+
+    // send the user detail/ payload to the frontend folks.
+    const token = attachCookiesToResponse({ res, user: userPayload });
+
+    res.status(StatusCodes.CREATED).json({
+      message: "User successfully created",
       _id: user.id,
       email: user.email,
+      token,
     });
-
   } catch (error) {
     res.status(StatusCodes.BAD_REQUEST).json({ message: error.message });
   }
@@ -84,19 +92,19 @@ const login = async (req, res, next) => {
     // comparing the hashed-password from request-body with
     //the password stored in the database
     const isPasswordCorrect = await user.comparePassword(password);
-    
+
     // email and password is not correct
     if (!isPasswordCorrect) {
       throw new UnauthenticatedError("username or password incorrect!");
     }
-    // add token to the user's payload 
+    // add token to the user's payload
     const userPayload = createUserPayload(user);
     // send the user detail/ payload to the frontend folks.
     const token = attachCookiesToResponse({ res, user: userPayload });
 
     res.status(StatusCodes.OK).json({ user: userPayload, token: token }); // user: userPayload
   } catch (error) {
-    res.status(StatusCodes.BAD_REQUEST).json({ message: error.message })
+    res.status(StatusCodes.BAD_REQUEST).json({ message: error.message });
   }
 };
 
@@ -127,5 +135,3 @@ module.exports = {
   currentUser,
   logout,
 };
-
-
